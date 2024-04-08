@@ -1,0 +1,7 @@
+# A Comment within this file
+
+[MySection]
+src/Exception @IronMan
+src/PluginOptions @Hulk @BlackWidow
+composer.json @IronMan
+LICENSE @DrStrange

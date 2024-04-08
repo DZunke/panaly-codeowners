@@ -1,0 +1,42 @@
+{
+    "name": "dzunke/panaly-codeowners",
+    "description": "A Panaly plugin that makes it able to write paths from a CODEOWNERS file to metrics",
+    "type": "library",
+    "license": "MIT",
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "autoload": {
+        "psr-4": {
+            "DZunke\\PanalyCodeOwners\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "DZunke\\PanalyCodeOwners\\Test\\": "tests/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Denis Zunke",
+            "email": "denis.zunke@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^8.2",
+        "dzunke/panaly": "dev-main",
+        "timoschinkel/codeowners": "^2.1"
+    },
+    "require-dev": {
+        "doctrine/coding-standard": "^12.0",
+        "phpstan/phpstan": "^1.10",
+        "phpstan/phpstan-deprecation-rules": "^1.1",
+        "phpstan/phpstan-strict-rules": "^1.5",
+        "phpunit/phpunit": "^11.1",
+        "symfony/var-dumper": "^7.0"
+    },
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
+    }
+}
