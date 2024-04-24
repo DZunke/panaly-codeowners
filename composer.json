@@ -24,7 +24,8 @@
     "require": {
         "php": "^8.2",
         "dzunke/panaly": "dev-main",
-        "timoschinkel/codeowners": "^2.1"
+        "timoschinkel/codeowners": "^2.1",
+        "symfony/finder": "^7.0"
     },
     "require-dev": {
         "doctrine/coding-standard": "^12.0",

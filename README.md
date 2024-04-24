@@ -7,6 +7,7 @@ file.
 ## Example Configuration
 
 ```yaml
+# panaly.dist.yaml
 plugins:
     DZunke\PanalyCodeOwners\CodeOwnersPlugin:
         codeowners: CODEOWNERS

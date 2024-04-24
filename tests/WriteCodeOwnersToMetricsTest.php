@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace DZunke\PanalyCodeOwners\Test;
 
-use CodeOwners\Parser;
-use DZunke\PanalyCodeOwners\CodeOwnerParser;
+use DZunke\PanalyCodeOwners\Parser\Parser;
 use DZunke\PanalyCodeOwners\PluginOptions;
 use DZunke\PanalyCodeOwners\WriteCodeOwnersToMetrics;
 use Panaly\Configuration\ConfigurationFile\Metric;
@@ -28,9 +27,16 @@ class WriteCodeOwnersToMetricsTest extends TestCase
 
         (new WriteCodeOwnersToMetrics(
             $pluginOptions,
-            new CodeOwnerParser(new Parser()),
+            new Parser(),
         ))($event);
 
-        self::assertSame(['src/PluginOptions', 'LICENSE'], $event->getOption('bar'));
+        self::assertSame(
+            [
+                'src/PluginOptions',
+                'src/PluginOptions/ReplaceMetricOption.php',
+                'LICENSE',
+            ],
+            $event->getOption('bar'),
+        );
     }
 }

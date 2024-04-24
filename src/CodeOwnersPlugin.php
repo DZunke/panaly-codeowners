@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace DZunke\PanalyCodeOwners;
 
-use CodeOwners\Parser;
+use DZunke\PanalyCodeOwners\Parser\Parser;
 use Panaly\Configuration\ConfigurationFile;
 use Panaly\Configuration\RuntimeConfiguration;
 use Panaly\Event\BeforeMetricCalculate;
@@ -21,7 +21,7 @@ class CodeOwnersPlugin extends BasePlugin
             BeforeMetricCalculate::class,
             new WriteCodeOwnersToMetrics(
                 PluginOptions::fromArray($options),
-                new CodeOwnerParser(new Parser()),
+                new Parser(),
             ),
         );
     }
