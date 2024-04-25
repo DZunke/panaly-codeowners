@@ -14,6 +14,7 @@ plugins:
         replace:
             -
                 metric: filesystem.file_count
+                type: relative
                 option: paths
                 owners: ['@Hulk', '@DrStrange']
 ```

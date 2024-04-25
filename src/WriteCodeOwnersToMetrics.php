@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace DZunke\PanalyCodeOwners;
 
+use DZunke\PanalyCodeOwners\Parser\Configuration;
 use DZunke\PanalyCodeOwners\Parser\Parser;
 use DZunke\PanalyCodeOwners\PluginOptions\ReplaceMetricOption;
 use Panaly\Event\BeforeMetricCalculate;
@@ -37,7 +38,7 @@ readonly class WriteCodeOwnersToMetrics
         assert(is_string($cwdPath));
 
         $pathsGroupedByOwners = $this->parser->parse(
-            $cwdPath,
+            new Configuration($cwdPath),
             $codeownerContent,
         );
 
@@ -47,10 +48,20 @@ readonly class WriteCodeOwnersToMetrics
                 continue;
             }
 
+            if ($optionForReplacement->type === ReplaceMetricOption::TYPE_RELATIVE) {
+                $pathsToBeSet = array_merge(
+                    $pathsToBeSet,
+                    $pathsGroupedByOwners[$owner]->getRelativePaths(),
+                    $pathsGroupedByOwners[$owner]->getRelativeFiles(),
+                );
+
+                continue;
+            }
+
             $pathsToBeSet = array_merge(
                 $pathsToBeSet,
-                $pathsGroupedByOwners[$owner]->getPaths(),
-                $pathsGroupedByOwners[$owner]->getFiles(),
+                $pathsGroupedByOwners[$owner]->getAbsolutePaths(),
+                $pathsGroupedByOwners[$owner]->getAbsoluteFiles(),
             );
         }
 

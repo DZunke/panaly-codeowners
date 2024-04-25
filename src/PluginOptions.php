@@ -51,7 +51,7 @@ readonly class PluginOptions
     }
 
     /**
-     * @param list<array{metric: string, option: string, owners: list<string>}> $replace
+     * @param list<array{metric: string, type: ?string, option: string, owners: list<string>}> $replace
      *
      * @return list<ReplaceMetricOption>
      */
@@ -61,6 +61,7 @@ readonly class PluginOptions
         foreach ($replace as $replaceOptions) {
             $replaceMetricOptions[] = new ReplaceMetricOption(
                 $replaceOptions['metric'],
+                $replaceOptions['type'] ?? ReplaceMetricOption::TYPE_RELATIVE,
                 $replaceOptions['option'],
                 $replaceOptions['owners'],
             );

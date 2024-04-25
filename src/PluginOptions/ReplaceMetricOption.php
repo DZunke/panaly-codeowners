@@ -8,8 +8,12 @@ use DZunke\PanalyCodeOwners\Exception\InvalidOptionGiven;
 
 readonly class ReplaceMetricOption
 {
+    public const TYPE_RELATIVE = 'relative';
+    public const TYPE_ABSOLUTE = 'absolute';
+
     public function __construct(
         public string $metricPath,
+        public string $type,
         public string $option,
         public array $owners,
     ) {

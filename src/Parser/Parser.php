@@ -19,42 +19,48 @@ use function trim;
 class Parser
 {
     /** @return array<non-empty-string, Owner> */
-    public function parse(string $rootPath, string $configuration): array
+    public function parse(Configuration $configuration, string $definition): array
     {
-        $patterns = (new CodeOwnerStandardParser())->parseString($configuration);
+        $patterns = (new CodeOwnerStandardParser())->parseString($definition);
         $matcher  = new PatternMatcher(...$patterns);
         $owners   = $this->patternsToOwners($patterns);
 
-        $pathsIterator = (new Finder())->in($rootPath)->notPath(['vendor'])->directories();
+        $pathsIterator = (new Finder())
+            ->in($configuration->rootPath)
+            ->notPath(['vendor'])
+            ->ignoreDotFiles($configuration->ignoreDotFiles)
+            ->directories();
+
         foreach ($pathsIterator as $path => $pathInfo) {
             try {
-                $foundOwner = $matcher->match($path);
+                $foundOwners = $matcher->match($path);
             } catch (NoMatchFoundException) {
                 // All fine ... we do not need a match - has no owner
                 continue;
             }
 
-            // As only one can rule the directory, take the only one
-            $foundOwner = $foundOwner->getOwners()[0];
-            assert(is_string($foundOwner)); // ensured by the exception
-
-            $owners[$foundOwner]->addPath($pathInfo->getRelativePathname());
+            foreach ($foundOwners->getOwners() as $foundOwner) {
+                $owners[$foundOwner]->addPath($pathInfo);
+            }
         }
 
-        $filesIterator = (new Finder())->in($rootPath)->notPath(['vendor'])->files();
+        $filesIterator = (new Finder())
+            ->in($configuration->rootPath)
+            ->notPath(['vendor'])
+            ->ignoreDotFiles($configuration->ignoreDotFiles)
+            ->files();
+
         foreach ($filesIterator as $file => $fileInfo) {
             try {
-                $foundOwner = $matcher->match($file);
+                $foundOwners = $matcher->match($file);
             } catch (NoMatchFoundException) {
                 // All fine ... we do not need a match - has no owner
                 continue;
             }
 
-            // As only one can rule the directory, take the only one
-            $foundOwner = $foundOwner->getOwners()[0];
-            assert(is_string($foundOwner)); // ensured by the exception
-
-            $owners[$foundOwner]->addFile($fileInfo->getRelativePathname());
+            foreach ($foundOwners->getOwners() as $foundOwner) {
+                $owners[$foundOwner]->addFile($fileInfo);
+            }
         }
 
         return $owners;
