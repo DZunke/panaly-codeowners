@@ -75,4 +75,67 @@ class WriteCodeOwnersToMetricsTest extends TestCase
             $event->getOption('bar'),
         );
     }
+
+    public function testMetricOptionWithOnlyFilesIsWritten(): void
+    {
+        $pluginOptions = PluginOptions::fromArray(
+            [
+                'codeowners' => __DIR__ . '/Fixture/CODEOWNERS',
+                'replace' => [
+                    [
+                        'metric' => 'foo',
+                        'write' => PluginOptions\ReplaceMetricOption::WRITE_FILES,
+                        'option' => 'bar',
+                        'owners' => ['@Hulk', '@DrStrange', '@Unknown'],
+                    ],
+                ],
+            ],
+        );
+
+        $metric = new Metric('foo', 'bar', 'baz', []);
+        $event  = new BeforeMetricCalculate($metric, ['paths' => null]);
+
+        (new WriteCodeOwnersToMetrics(
+            $pluginOptions,
+            new Parser(),
+        ))($event);
+
+        self::assertSame(
+            [
+                'src/PluginOptions/ReplaceMetricOption.php',
+                'LICENSE',
+            ],
+            $event->getOption('bar'),
+        );
+    }
+
+    public function testMetricOptionWithOnlyPathsIsWritten(): void
+    {
+        $pluginOptions = PluginOptions::fromArray(
+            [
+                'codeowners' => __DIR__ . '/Fixture/CODEOWNERS',
+                'replace' => [
+                    [
+                        'metric' => 'foo',
+                        'write' => PluginOptions\ReplaceMetricOption::WRITE_PATHS,
+                        'option' => 'bar',
+                        'owners' => ['@Hulk', '@DrStrange', '@Unknown'],
+                    ],
+                ],
+            ],
+        );
+
+        $metric = new Metric('foo', 'bar', 'baz', []);
+        $event  = new BeforeMetricCalculate($metric, ['paths' => null]);
+
+        (new WriteCodeOwnersToMetrics(
+            $pluginOptions,
+            new Parser(),
+        ))($event);
+
+        self::assertSame(
+            ['src/PluginOptions'],
+            $event->getOption('bar'),
+        );
+    }
 }

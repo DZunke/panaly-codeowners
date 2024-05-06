@@ -51,7 +51,7 @@ readonly class PluginOptions
     }
 
     /**
-     * @param list<array{metric: string, type: ?string, option: string, owners: list<string>}> $replace
+     * @param list<array{metric: string, type: ?string, write: ?string, option: string, owners: list<string>}> $replace
      *
      * @return list<ReplaceMetricOption>
      */
@@ -62,6 +62,7 @@ readonly class PluginOptions
             $replaceMetricOptions[] = new ReplaceMetricOption(
                 $replaceOptions['metric'],
                 $replaceOptions['type'] ?? ReplaceMetricOption::TYPE_RELATIVE,
+                $replaceOptions['write'] ?? ReplaceMetricOption::WRITE_BOTH,
                 $replaceOptions['option'],
                 $replaceOptions['owners'],
             );

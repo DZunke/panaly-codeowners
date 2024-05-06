@@ -11,9 +11,14 @@ readonly class ReplaceMetricOption
     public const TYPE_RELATIVE = 'relative';
     public const TYPE_ABSOLUTE = 'absolute';
 
+    public const WRITE_FILES = 'files';
+    public const WRITE_PATHS = 'paths';
+    public const WRITE_BOTH  = 'both';
+
     public function __construct(
         public string $metricPath,
         public string $type,
+        public string $write,
         public string $option,
         public array $owners,
     ) {
