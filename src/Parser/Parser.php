@@ -13,17 +13,30 @@ use Symfony\Component\Finder\Finder;
 use function array_key_exists;
 use function assert;
 use function is_string;
+use function sha1;
 use function str_contains;
 use function trim;
 
 class Parser
 {
+    public const UNOWNED = 'unowned';
+
+    /** @var array<string, array<non-empty-string, Owner>> */
+    private static array $ownerCache = [];
+
     /** @return array<non-empty-string, Owner> */
     public function parse(Configuration $configuration, string $definition): array
     {
+        $codeownerContentHash = sha1($definition);
+        if (isset(self::$ownerCache[$codeownerContentHash])) {
+            return self::$ownerCache[$codeownerContentHash];
+        }
+
         $patterns = (new CodeOwnerStandardParser())->parseString($definition);
         $matcher  = new PatternMatcher(...$patterns);
         $owners   = $this->patternsToOwners($patterns);
+
+        $owners[self::UNOWNED] = new Owner(self::UNOWNED);
 
         $pathsIterator = (new Finder())
             ->in($configuration->rootPath)
@@ -35,11 +48,12 @@ class Parser
             try {
                 $foundOwners = $matcher->match($path);
             } catch (NoMatchFoundException) {
-                // All fine ... we do not need a match - has no owner
+                $owners[self::UNOWNED]->addPath($pathInfo);
                 continue;
             }
 
             foreach ($foundOwners->getOwners() as $foundOwner) {
+                // All fine ... we do not need a match - has no owner
                 $owners[$foundOwner]->addPath($pathInfo);
             }
         }
@@ -55,6 +69,7 @@ class Parser
                 $foundOwners = $matcher->match($file);
             } catch (NoMatchFoundException) {
                 // All fine ... we do not need a match - has no owner
+                $owners[self::UNOWNED]->addFile($fileInfo);
                 continue;
             }
 
@@ -63,7 +78,7 @@ class Parser
             }
         }
 
-        return $owners;
+        return self::$ownerCache[$codeownerContentHash] = $owners;
     }
 
     /** @return array<non-empty-string, Owner> */

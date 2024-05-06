@@ -10,6 +10,28 @@ use PHPUnit\Framework\TestCase;
 
 class ParserTest extends TestCase
 {
+    public function testUnownedCollection(): void
+    {
+        $owners = (new Parser())->parse(
+            $this->getConfiguration(),
+            <<<'TEXT'
+            *.go @globalOwner # a single owner but it will not have anything because there is nothing
+            TEXT,
+        );
+
+        self::assertArrayHasKey('@globalOwner', $owners);
+        $globalOwner = $owners['@globalOwner'];
+
+        self::assertCount(0, $globalOwner->getPaths());
+        self::assertCount(0, $globalOwner->getFiles());
+
+        self::assertArrayHasKey(Parser::UNOWNED, $owners);
+        $unowned = $owners[Parser::UNOWNED];
+
+        self::assertCount(3, $unowned->getPaths());
+        self::assertCount(5, $unowned->getFiles());
+    }
+
     public function testGlobalOwnerOnItsOwn(): void
     {
         $owners = (new Parser())->parse(
