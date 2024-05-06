@@ -25,9 +25,11 @@ groups:
         title: "Information around the Project Ownership"
         metrics:
             unowned_directories: ~
+            owned_files:
+                owners: ['@my_owner_group']
 ```
 
-## Options for single metric
+## Options for single metric replacement
 
 | Option | Description                                                                                                                                                                                                                                           |
 |--------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -43,6 +45,15 @@ groups:
 
 The directory count with the name `unowned_directories` gives an `Table` result with a listing of all unowned directories.
 Beware that the list can be very long. There are no options available. The CODEOWNER file from the plugin options is utilized.
+
+**Owned Files**
+
+The file count with the name `owned_files` gives an `IntegerValue` result with a listing of all owned files of specific owners.
+The owners option has to be given to let the metric work correct, otherwise it will return a zero value.
+
+| Option | Description                                                             |
+|--------|-------------------------------------------------------------------------|
+| owners | An array of owners that should be summarized to a single integer value. | 
 
 ## Known Problems
 
