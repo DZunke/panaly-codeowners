@@ -38,7 +38,7 @@ class WriteCodeOwnersToMetrics
         assert(is_string($cwdPath));
 
         $pathsGroupedByOwners = $this->parser->parse(
-            new Configuration($cwdPath),
+            new Configuration(rootPath: $cwdPath, excludeDirectories: $this->options->excludeDirectories),
             $codeownerContent,
         );
 

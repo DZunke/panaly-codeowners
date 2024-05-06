@@ -7,9 +7,16 @@ namespace DZunke\PanalyCodeOwners\Test\Parser;
 use DZunke\PanalyCodeOwners\Parser\Configuration;
 use DZunke\PanalyCodeOwners\Parser\Parser;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 
 class ParserTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        // Reset the parser internal cache on every run
+        (new ReflectionClass(Parser::class))->setStaticPropertyValue('ownerCache', []);
+    }
+
     public function testUnownedCollection(): void
     {
         $owners = (new Parser())->parse(

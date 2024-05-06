@@ -12,6 +12,7 @@ file.
 plugins:
     DZunke\PanalyCodeOwners\CodeOwnersPlugin:
         codeowners: CODEOWNERS
+        exclude_directories: [ 'vendor' ]
         replace:
             -   metric: filesystem.file_count
                 type: relative

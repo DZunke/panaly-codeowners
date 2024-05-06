@@ -40,7 +40,7 @@ class Parser
 
         $pathsIterator = (new Finder())
             ->in($configuration->rootPath)
-            ->notPath(['vendor'])
+            ->notPath($configuration->excludeDirectories)
             ->ignoreDotFiles($configuration->ignoreDotFiles)
             ->directories();
 
@@ -60,7 +60,7 @@ class Parser
 
         $filesIterator = (new Finder())
             ->in($configuration->rootPath)
-            ->notPath(['vendor'])
+            ->notPath($configuration->excludeDirectories)
             ->ignoreDotFiles($configuration->ignoreDotFiles)
             ->files();
 

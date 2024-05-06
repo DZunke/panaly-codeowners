@@ -20,6 +20,7 @@ readonly class PluginOptions
     public function __construct(
         public string $codeOwnerFile,
         public array $replaceMetricOptions,
+        public array $excludeDirectories = ['vendor'],
     ) {
         if (! is_readable($this->codeOwnerFile)) {
             throw InvalidOptionGiven::codeOwnersFileNotReadable($this->codeOwnerFile);
@@ -47,6 +48,7 @@ readonly class PluginOptions
         return new self(
             $options['codeowners'] ?? 'CODEOWNERS',
             self::fromArrayConvertedReplaceMetricOptions($options['replace'] ?? []),
+            $options['exclude_directories'] ?? ['vendor'],
         );
     }
 
