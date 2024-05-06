@@ -18,6 +18,12 @@ plugins:
                 write: paths
                 option: paths
                 owners: [ '@Hulk', '@DrStrange' ]
+
+groups:
+    ownership:
+        title: "Information around the Project Ownership"
+        metrics:
+            unowned_directories: ~
 ```
 
 ## Options for single metric
@@ -29,6 +35,13 @@ plugins:
 | owners | **(Required)** A list of owners that should be searched for in the codeowners file. The results will be merged together and hand over to the metric option.                                                                                           | 
 | type   | **(Optional)** can be `relative` or `absolute`. The paths will be given relative to the cwd path or absolute. In default the relative type is given.                                                                                                  |
 | write  | **(Optional)** can be `files` or `paths`. It defines which of the owned types will be given. In default the option is set to `both` and so everything will be given - beware, because all paths are parsed for their files - so the list can be long. |
+
+## Available Metrics
+
+**Unowned Directories**
+
+The directory count with the name `unowned_directories` gives an `Table` result with a listing of all unowned directories.
+Beware that the list can be very long. There are no options available. The CODEOWNER file from the plugin options is utilized.
 
 ## Known Problems
 
