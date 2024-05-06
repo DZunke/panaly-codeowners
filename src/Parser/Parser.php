@@ -8,6 +8,8 @@ use CodeOwners\Exception\NoMatchFoundException;
 use CodeOwners\Parser as CodeOwnerStandardParser;
 use CodeOwners\PatternMatcher;
 use DZunke\PanalyCodeOwners\Owner;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use Symfony\Component\Finder\Finder;
 
 use function array_key_exists;
@@ -24,13 +26,29 @@ class Parser
     /** @var array<string, array<non-empty-string, Owner>> */
     private static array $ownerCache = [];
 
+    private LoggerInterface $logger;
+
+    public function __construct()
+    {
+        $this->logger = new NullLogger();
+    }
+
+    public function setLogger(LoggerInterface $logger): void
+    {
+        $this->logger = $logger;
+    }
+
     /** @return array<non-empty-string, Owner> */
     public function parse(Configuration $configuration, string $definition): array
     {
         $codeownerContentHash = sha1($definition);
         if (isset(self::$ownerCache[$codeownerContentHash])) {
+            $this->logger->debug('Loaded code owners from cache.');
+
             return self::$ownerCache[$codeownerContentHash];
         }
+
+        $this->logger->debug('Parsing code owners from filesystem.');
 
         $patterns = (new CodeOwnerStandardParser())->parseString($definition);
         $matcher  = new PatternMatcher(...$patterns);

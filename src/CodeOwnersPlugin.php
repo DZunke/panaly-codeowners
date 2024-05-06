@@ -22,11 +22,14 @@ class CodeOwnersPlugin extends BasePlugin
         RuntimeConfiguration $runtimeConfiguration,
         array $options,
     ): void {
+        $this->parser = new Parser();
+        $this->parser->setLogger($runtimeConfiguration->getLogger());
+
         $runtimeConfiguration->getEventDispatcher()->addListener(
             BeforeMetricCalculate::class,
             new WriteCodeOwnersToMetrics(
                 $this->pluginOptions = PluginOptions::fromArray($options),
-                $this->parser        = new Parser(),
+                $this->parser,
             ),
         );
     }
