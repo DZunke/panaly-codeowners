@@ -25,8 +25,10 @@ groups:
         title: "Information around the Project Ownership"
         metrics:
             unowned_directories: ~
-            owned_files:
-                owners: ['@my_owner_group']
+            owned_files_count:
+                owners: [ '@my_owner_group' ]
+            owned_directories_count:
+                owners: [ '@my_owner_group' ]
 ```
 
 ## Options for single metric replacement

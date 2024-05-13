@@ -19,7 +19,7 @@ use function getcwd;
 use function is_array;
 use function is_string;
 
-class OwnedFiles implements Metric
+class OwnedDirectoriesCount implements Metric
 {
     public function __construct(
         private readonly Parser $parser,
@@ -29,12 +29,12 @@ class OwnedFiles implements Metric
 
     public function getIdentifier(): string
     {
-        return 'owned_files';
+        return 'owned_directories_count';
     }
 
     public function getDefaultTitle(): string
     {
-        return 'Owned Files';
+        return 'Owned Directories Count';
     }
 
     public function calculate(array $options): Value
@@ -60,7 +60,7 @@ class OwnedFiles implements Metric
                 continue;
             }
 
-            $fileCount += count($owners[$owner]->getFiles());
+            $fileCount += count($owners[$owner]->getPaths());
         }
 
         return new IntegerValue($fileCount);

@@ -4,27 +4,27 @@ declare(strict_types=1);
 
 namespace DZunke\PanalyCodeOwners\Test\Metric;
 
-use DZunke\PanalyCodeOwners\Metric\OwnedFiles;
+use DZunke\PanalyCodeOwners\Metric\OwnedFilesCount;
 use DZunke\PanalyCodeOwners\Owner;
 use DZunke\PanalyCodeOwners\Parser\Parser;
 use DZunke\PanalyCodeOwners\PluginOptions;
 use Panaly\Result\Metric\IntegerValue;
 use PHPUnit\Framework\TestCase;
 
-class OwnedFilesTest extends TestCase
+class OwnedFilesCountTest extends TestCase
 {
     public function testThatTheIdentifierIsCorrect(): void
     {
         $metric = $this->getMetric();
 
-        self::assertSame('owned_files', $metric->getIdentifier());
+        self::assertSame('owned_files_count', $metric->getIdentifier());
     }
 
     public function testThatTheDefaultTitleIsCorrect(): void
     {
         $metric = $this->getMetric();
 
-        self::assertSame('Owned Files', $metric->getDefaultTitle());
+        self::assertSame('Owned Files Count', $metric->getDefaultTitle());
     }
 
     public function testResultWithoutOwnersOption(): void
@@ -66,9 +66,9 @@ class OwnedFilesTest extends TestCase
         self::assertSame(2, $value->value);
     }
 
-    private function getMetric(Parser|null $parser = null): OwnedFiles
+    private function getMetric(Parser|null $parser = null): OwnedFilesCount
     {
-        return new OwnedFiles(
+        return new OwnedFilesCount(
             $parser ?? self::createStub(Parser::class),
             PluginOptions::fromArray([
                 'codeowners' => __DIR__ . '/../Fixture/CODEOWNERS_Github',
