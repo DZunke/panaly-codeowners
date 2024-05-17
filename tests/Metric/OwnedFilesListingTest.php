@@ -4,27 +4,27 @@ declare(strict_types=1);
 
 namespace DZunke\PanalyCodeOwners\Test\Metric;
 
-use DZunke\PanalyCodeOwners\Metric\OwnedDirectoriesCount;
+use DZunke\PanalyCodeOwners\Metric\OwnedFilesListing;
 use DZunke\PanalyCodeOwners\Owner;
 use DZunke\PanalyCodeOwners\Parser\Parser;
 use DZunke\PanalyCodeOwners\PluginOptions;
-use Panaly\Result\Metric\IntegerValue;
+use Panaly\Result\Metric\Table;
 use PHPUnit\Framework\TestCase;
 
-class OwnedDirectoriesCountTest extends TestCase
+class OwnedFilesListingTest extends TestCase
 {
     public function testThatTheIdentifierIsCorrect(): void
     {
         $metric = $this->getMetric();
 
-        self::assertSame('owned_directories_count', $metric->getIdentifier());
+        self::assertSame('owned_files_list', $metric->getIdentifier());
     }
 
     public function testThatTheDefaultTitleIsCorrect(): void
     {
         $metric = $this->getMetric();
 
-        self::assertSame('Owned Directories Count', $metric->getDefaultTitle());
+        self::assertSame('Owned Files List', $metric->getDefaultTitle());
     }
 
     public function testResultWithoutOwnersOption(): void
@@ -35,8 +35,8 @@ class OwnedDirectoriesCountTest extends TestCase
         $metric = $this->getMetric($parser);
         $value  = $metric->calculate([]);
 
-        self::assertInstanceOf(IntegerValue::class, $value);
-        self::assertSame(0, $value->value);
+        self::assertInstanceOf(Table::class, $value);
+        self::assertSame([], $value->rows);
     }
 
     public function testTableResultWithoutOwnersButWithOwnerOption(): void
@@ -47,14 +47,14 @@ class OwnedDirectoriesCountTest extends TestCase
         $metric = $this->getMetric($parser);
         $value  = $metric->calculate(['owners' => ['@owner']]);
 
-        self::assertInstanceOf(IntegerValue::class, $value);
-        self::assertSame(0, $value->value);
+        self::assertInstanceOf(Table::class, $value);
+        self::assertSame([], $value->rows);
     }
 
-    public function testResultWithDirectories(): void
+    public function testResultWithFiles(): void
     {
         $owner = self::createStub(Owner::class);
-        $owner->method('getPaths')->willReturn(['foo', 'bar']);
+        $owner->method('getFiles')->willReturn(['foo', 'bar']);
 
         $parser = $this->createMock(Parser::class);
         $parser->expects($this->once())->method('parse')->willReturn(['@owner' => $owner]);
@@ -62,13 +62,13 @@ class OwnedDirectoriesCountTest extends TestCase
         $metric = $this->getMetric($parser);
         $value  = $metric->calculate(['owners' => ['@owner']]);
 
-        self::assertInstanceOf(IntegerValue::class, $value);
-        self::assertSame(2, $value->value);
+        self::assertInstanceOf(Table::class, $value);
+        self::assertSame([], $value->rows);
     }
 
-    private function getMetric(Parser|null $parser = null): OwnedDirectoriesCount
+    private function getMetric(Parser|null $parser = null): OwnedFilesListing
     {
-        return new OwnedDirectoriesCount(
+        return new OwnedFilesListing(
             $parser ?? self::createStub(Parser::class),
             PluginOptions::fromArray([
                 'codeowners' => __DIR__ . '/../Fixture/CODEOWNERS_Github',

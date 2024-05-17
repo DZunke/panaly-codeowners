@@ -27,8 +27,12 @@ groups:
             unowned_directories: ~
             owned_files_count:
                 owners: [ '@my_owner_group' ]
-            owned_directories_count:
+            owned_files_list:
                 owners: [ '@my_owner_group' ]
+            owned_directories_count:
+                owners: [ '@my_owner_group', '@another_owner_group' ]
+            owned_directories_list:
+                owners: [ '@my_owner_group', '@another_owner_group' ]
 ```
 
 ## Options for single metric replacement
@@ -48,10 +52,39 @@ groups:
 The directory count with the name `unowned_directories` gives an `Table` result with a listing of all unowned directories.
 Beware that the list can be very long. There are no options available. The CODEOWNER file from the plugin options is utilized.
 
-**Owned Files**
+**Owned Files Count**
 
-The file count with the name `owned_files` gives an `IntegerValue` result with a listing of all owned files of specific owners.
-The owners option has to be given to let the metric work correct, otherwise it will return a zero value.
+The file count with the name `owned_files_count` gives an `IntegerValue` result with a summarization of all owned files 
+of specific owners. The owners option has to be given to let the metric work correct, otherwise it will return a zero value.
+
+| Option | Description                                                             |
+|--------|-------------------------------------------------------------------------|
+| owners | An array of owners that should be summarized to a single integer value. | 
+
+**Owned Files Listing**
+
+The file count with the name `owned_files_list` gives an `Table` result with a listing of all owned files with relative path
+of specific owners. The owners option has to be given to let the metric work correct, otherwise it will return an empty list.
+
+| Option | Description                                                             |
+|--------|-------------------------------------------------------------------------|
+| owners | An array of owners that should be summarized to a single integer value. | 
+
+**Owned Directories Count**
+
+The directory count with the name `owned_directories_count` gives an `IntegerValue` result with a summarization of all 
+owned directories of specific owners. The owners option has to be given to let the metric work correct, otherwise it will 
+return a zero value.
+
+| Option | Description                                                             |
+|--------|-------------------------------------------------------------------------|
+| owners | An array of owners that should be summarized to a single integer value. | 
+
+**Owned Directory Listing**
+
+The file count with the name `owned_directories_list` gives an `Table` result with a listing of all owned directories 
+with relative path of specific owners. The owners option has to be given to let the metric work correct, otherwise it 
+will return an empty list.
 
 | Option | Description                                                             |
 |--------|-------------------------------------------------------------------------|

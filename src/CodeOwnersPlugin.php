@@ -6,6 +6,7 @@ namespace DZunke\PanalyCodeOwners;
 
 use DZunke\PanalyCodeOwners\Metric\OwnedDirectoriesCount;
 use DZunke\PanalyCodeOwners\Metric\OwnedFilesCount;
+use DZunke\PanalyCodeOwners\Metric\OwnedFilesListing;
 use DZunke\PanalyCodeOwners\Metric\UnownedDirectories;
 use DZunke\PanalyCodeOwners\Parser\Parser;
 use Panaly\Configuration\ConfigurationFile;
@@ -47,6 +48,7 @@ class CodeOwnersPlugin extends BasePlugin
             new UnownedDirectories($this->parser, $this->pluginOptions),
             new OwnedFilesCount($this->parser, $this->pluginOptions),
             new OwnedDirectoriesCount($this->parser, $this->pluginOptions),
+            new OwnedFilesListing($this->parser, $this->pluginOptions),
         ];
     }
 }
