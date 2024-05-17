@@ -24,8 +24,10 @@ class CodeOwnersPlugin extends BasePlugin
         RuntimeConfiguration $runtimeConfiguration,
         array $options,
     ): void {
-        $this->parser = new Parser();
-        $this->parser->setLogger($runtimeConfiguration->getLogger());
+        $this->parser = new Parser(
+            $runtimeConfiguration->getWorkingDirectory(),
+            $runtimeConfiguration->getLogger(),
+        );
 
         $runtimeConfiguration->getEventDispatcher()->addListener(
             BeforeMetricCalculate::class,

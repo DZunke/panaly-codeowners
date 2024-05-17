@@ -14,6 +14,7 @@ use Symfony\Component\Finder\Finder;
 
 use function array_key_exists;
 use function assert;
+use function getcwd;
 use function is_string;
 use function sha1;
 use function str_contains;
@@ -27,15 +28,14 @@ class Parser
     private static array $ownerCache = [];
 
     private LoggerInterface $logger;
+    private string $workingDirectory;
 
-    public function __construct()
-    {
-        $this->logger = new NullLogger();
-    }
-
-    public function setLogger(LoggerInterface $logger): void
-    {
-        $this->logger = $logger;
+    public function __construct(
+        string|null $workingDirectory = null,
+        LoggerInterface|null $logger = null,
+    ) {
+        $this->workingDirectory = $workingDirectory ?? (string) getcwd();
+        $this->logger           = $logger ?? new NullLogger();
     }
 
     /** @return array<non-empty-string, Owner> */
@@ -57,7 +57,7 @@ class Parser
         $owners[self::UNOWNED] = new Owner(self::UNOWNED);
 
         $pathsIterator = (new Finder())
-            ->in($configuration->rootPath)
+            ->in($this->workingDirectory)
             ->notPath($configuration->excludeDirectories)
             ->ignoreDotFiles($configuration->ignoreDotFiles)
             ->directories();
@@ -77,7 +77,7 @@ class Parser
         }
 
         $filesIterator = (new Finder())
-            ->in($configuration->rootPath)
+            ->in($this->workingDirectory)
             ->notPath($configuration->excludeDirectories)
             ->ignoreDotFiles($configuration->ignoreDotFiles)
             ->files();

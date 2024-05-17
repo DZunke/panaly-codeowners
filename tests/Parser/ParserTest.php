@@ -19,7 +19,7 @@ class ParserTest extends TestCase
 
     public function testUnownedCollection(): void
     {
-        $owners = (new Parser())->parse(
+        $owners = $this->getParser()->parse(
             $this->getConfiguration(),
             <<<'TEXT'
             *.go @globalOwner # a single owner but it will not have anything because there is nothing
@@ -41,7 +41,7 @@ class ParserTest extends TestCase
 
     public function testGlobalOwnerOnItsOwn(): void
     {
-        $owners = (new Parser())->parse(
+        $owners = $this->getParser()->parse(
             $this->getConfiguration(),
             <<<'TEXT'
             * @globalOwner # just a single person to rule them all
@@ -60,7 +60,7 @@ class ParserTest extends TestCase
 
     public function testASingleOwnerOfMultipleFileTypes(): void
     {
-        $owners = (new Parser())->parse(
+        $owners = $this->getParser()->parse(
             $this->getConfiguration(),
             <<<'TEXT'
             *.php   @fileOwner
@@ -80,7 +80,7 @@ class ParserTest extends TestCase
 
     public function testAFileCouldBeOwnedByMultipleOwners(): void
     {
-        $owners = (new Parser())->parse(
+        $owners = $this->getParser()->parse(
             $this->getConfiguration(),
             <<<'TEXT'
             *.php       @fileOwner @anotherOwner
@@ -103,7 +103,7 @@ class ParserTest extends TestCase
     public function testOwningADirectoryWithAppendedSlash(): void
     {
         // See Github Specification, the appended slash marks that this directory itself is not owned but it's files
-        $owners = (new Parser())->parse(
+        $owners = $this->getParser()->parse(
             $this->getConfiguration(ignoreDotFiles: false),
             <<<'TEXT'
             BarDir/ @recursiveOwner
@@ -119,7 +119,7 @@ class ParserTest extends TestCase
 
     public function testGlobalOwnerIsOverwrittenBySpecificOwnersAndOrderCounts(): void
     {
-        $owners = (new Parser())->parse(
+        $owners = $this->getParser()->parse(
             $this->getConfiguration(),
             <<<'TEXT'
             * @globalOwner      # just a single person to rule them all
@@ -148,12 +148,14 @@ class ParserTest extends TestCase
         self::assertEqualsCanonicalizing(['FooDir/bar.js', 'BarDir/FooDir/my.html'], $fooOwner->getRelativeFiles());
     }
 
+    private function getParser(): Parser
+    {
+        return new Parser(workingDirectory: __DIR__ . '/../Fixture/Globs/RootDirectory');
+    }
+
     private function getConfiguration(
         bool $ignoreDotFiles = true,
     ): Configuration {
-        return new Configuration(
-            __DIR__ . '/../Fixture/Globs/RootDirectory',
-            $ignoreDotFiles,
-        );
+        return new Configuration($ignoreDotFiles);
     }
 }

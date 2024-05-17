@@ -18,7 +18,6 @@ use function array_values;
 use function assert;
 use function count;
 use function file_get_contents;
-use function getcwd;
 use function is_array;
 use function is_string;
 
@@ -49,11 +48,8 @@ class OwnedFilesListing implements Metric
         $codeownerContent = file_get_contents($this->pluginOptions->codeOwnerFile);
         assert(is_string($codeownerContent));
 
-        $cwdPath = getcwd();
-        assert(is_string($cwdPath));
-
         $owners = $this->parser->parse(
-            new Configuration($cwdPath),
+            new Configuration(),
             $codeownerContent,
         );
 

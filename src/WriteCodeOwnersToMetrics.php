@@ -13,7 +13,6 @@ use function array_key_exists;
 use function array_merge;
 use function assert;
 use function file_get_contents;
-use function getcwd;
 use function is_string;
 
 class WriteCodeOwnersToMetrics
@@ -34,11 +33,8 @@ class WriteCodeOwnersToMetrics
         $codeownerContent = file_get_contents($this->options->codeOwnerFile);
         assert(is_string($codeownerContent));
 
-        $cwdPath = getcwd();
-        assert(is_string($cwdPath));
-
         $pathsGroupedByOwners = $this->parser->parse(
-            new Configuration(rootPath: $cwdPath, excludeDirectories: $this->options->excludeDirectories),
+            new Configuration(excludeDirectories: $this->options->excludeDirectories),
             $codeownerContent,
         );
 
