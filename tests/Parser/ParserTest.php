@@ -51,8 +51,8 @@ class ParserTest extends TestCase
         self::assertArrayHasKey('@globalOwner', $owners);
         $globalOwner = $owners['@globalOwner'];
 
-        self::assertSame(['FooDir', 'BarDir', 'BarDir/FooDir'], $globalOwner->getRelativePaths());
-        self::assertSame(
+        self::assertEqualsCanonicalizing(['FooDir', 'BarDir', 'BarDir/FooDir'], $globalOwner->getRelativePaths());
+        self::assertEqualsCanonicalizing(
             ['FooDir/bar.js', 'baz.php', 'foo.txt', 'root.js', 'BarDir/FooDir/my.html'],
             $globalOwner->getRelativeFiles(),
         );
@@ -72,7 +72,7 @@ class ParserTest extends TestCase
         $fileOwner = $owners['@fileOwner'];
 
         self::assertSame([], $fileOwner->getPaths());
-        self::assertSame(
+        self::assertEqualsCanonicalizing(
             ['baz.php', 'BarDir/FooDir/my.html'],
             $fileOwner->getRelativeFiles(),
         );
@@ -114,7 +114,7 @@ class ParserTest extends TestCase
         $recursiveOwner = $owners['@recursiveOwner'];
 
         self::assertSame(['BarDir/FooDir'], $recursiveOwner->getRelativePaths());
-        self::assertSame(['BarDir/.gitignore', 'BarDir/FooDir/my.html'], $recursiveOwner->getRelativeFiles());
+        self::assertEqualsCanonicalizing(['BarDir/.gitignore', 'BarDir/FooDir/my.html'], $recursiveOwner->getRelativeFiles());
     }
 
     public function testGlobalOwnerIsOverwrittenBySpecificOwnersAndOrderCounts(): void
@@ -143,9 +143,9 @@ class ParserTest extends TestCase
         self::assertArrayHasKey('@fooOwner', $owners);
         $fooOwner = $owners['@fooOwner'];
 
-        self::assertSame(['FooDir', 'BarDir/FooDir'], $fooOwner->getRelativePaths());
+        self::assertEqualsCanonicalizing(['FooDir', 'BarDir/FooDir'], $fooOwner->getRelativePaths());
         // Has a js file because defined AFTER *.js owner
-        self::assertSame(['FooDir/bar.js', 'BarDir/FooDir/my.html'], $fooOwner->getRelativeFiles());
+        self::assertEqualsCanonicalizing(['FooDir/bar.js', 'BarDir/FooDir/my.html'], $fooOwner->getRelativeFiles());
     }
 
     private function getConfiguration(
