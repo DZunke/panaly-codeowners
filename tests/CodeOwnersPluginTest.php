@@ -6,6 +6,7 @@ namespace DZunke\PanalyCodeOwners\Test;
 
 use DZunke\PanalyCodeOwners\CodeOwnersPlugin;
 use DZunke\PanalyCodeOwners\Metric\OwnedDirectoriesCount;
+use DZunke\PanalyCodeOwners\Metric\OwnedDirectoriesListing;
 use DZunke\PanalyCodeOwners\Metric\OwnedFilesCount;
 use DZunke\PanalyCodeOwners\Metric\OwnedFilesListing;
 use DZunke\PanalyCodeOwners\Metric\UnownedDirectories;
@@ -57,30 +58,29 @@ class CodeOwnersPluginTest extends TestCase
 
     public function testGetAvailableMetricsWhenInitialized(): void
     {
-        $runtimeConfiguration = self::createStub(RuntimeConfiguration::class);
-        $plugin               = new CodeOwnersPlugin();
-        $plugin->initialize(
-            new ConfigurationFile([], [], [], []),
+        $runtimeConfiguration = $this->createMock(RuntimeConfiguration::class);
+
+        $matcher = $this->exactly(5);
+        $runtimeConfiguration->expects($matcher)
+            ->method('addMetric')
+            ->willReturnCallback(static function (object $metric) use ($matcher): void {
+                match ($matcher->numberOfInvocations()) {
+                    1 => self::assertInstanceOf(OwnedDirectoriesCount::class, $metric),
+                    2 => self::assertInstanceOf(OwnedDirectoriesListing::class, $metric),
+                    3 => self::assertInstanceOf(OwnedFilesCount::class, $metric),
+                    4 => self::assertInstanceOf(OwnedFilesListing::class, $metric),
+                    5 => self::assertInstanceOf(UnownedDirectories::class, $metric),
+                    default => self::fail('Too much is going on here!'),
+                };
+            });
+
+        (new CodeOwnersPlugin())->initialize(
+            self::createStub(ConfigurationFile::class),
             $runtimeConfiguration,
             [
                 'codeowners' => __DIR__ . '/Fixture/CODEOWNERS_Github',
                 'replace' => [['metric' => 'foo', 'option' => 'bar', 'owners' => ['@foo']]],
             ],
         );
-
-        $metrics = $plugin->getAvailableMetrics([]);
-        self::assertCount(5, $metrics);
-        self::assertInstanceOf(OwnedDirectoriesCount::class, $metrics[0]);
-        self::assertInstanceOf(UnownedDirectories::class, $metrics[1]);
-        self::assertInstanceOf(OwnedFilesCount::class, $metrics[2]);
-        self::assertInstanceOf(OwnedDirectoriesCount::class, $metrics[3]);
-        self::assertInstanceOf(OwnedFilesListing::class, $metrics[4]);
-    }
-
-    public function testGetAvailableMetricsWhenNotInitialized(): void
-    {
-        $plugin  = new CodeOwnersPlugin();
-        $metrics = $plugin->getAvailableMetrics([]);
-        self::assertEmpty($metrics);
     }
 }

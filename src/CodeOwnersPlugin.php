@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace DZunke\PanalyCodeOwners;
 
 use DZunke\PanalyCodeOwners\Metric\OwnedDirectoriesCount;
+use DZunke\PanalyCodeOwners\Metric\OwnedDirectoriesListing;
 use DZunke\PanalyCodeOwners\Metric\OwnedFilesCount;
 use DZunke\PanalyCodeOwners\Metric\OwnedFilesListing;
 use DZunke\PanalyCodeOwners\Metric\UnownedDirectories;
@@ -12,19 +13,16 @@ use DZunke\PanalyCodeOwners\Parser\Parser;
 use Panaly\Configuration\ConfigurationFile;
 use Panaly\Configuration\RuntimeConfiguration;
 use Panaly\Event\BeforeMetricCalculate;
-use Panaly\Plugin\BasePlugin;
+use Panaly\Plugin\Plugin;
 
-class CodeOwnersPlugin extends BasePlugin
+class CodeOwnersPlugin implements Plugin
 {
-    private PluginOptions|null $pluginOptions = null;
-    private Parser|null $parser               = null;
-
     public function initialize(
         ConfigurationFile $configurationFile,
         RuntimeConfiguration $runtimeConfiguration,
         array $options,
     ): void {
-        $this->parser = new Parser(
+        $parser = new Parser(
             $runtimeConfiguration->getWorkingDirectory(),
             $runtimeConfiguration->getLogger(),
         );
@@ -32,26 +30,25 @@ class CodeOwnersPlugin extends BasePlugin
         $runtimeConfiguration->getEventDispatcher()->addListener(
             BeforeMetricCalculate::class,
             new WriteCodeOwnersToMetrics(
-                $this->pluginOptions = PluginOptions::fromArray($options),
-                $this->parser,
+                $pluginOptions = PluginOptions::fromArray($options),
+                $parser,
             ),
         );
+
+        $this->registerPlugins($runtimeConfiguration, $parser, $pluginOptions);
     }
 
-    /** @inheritDoc */
-    public function getAvailableMetrics(array $options): array
-    {
-        if (! $this->parser instanceof Parser || ! $this->pluginOptions instanceof PluginOptions) {
-            // If one of the required things are not available there will be no metric available
-            return [];
-        }
+    public function registerPlugins(
+        RuntimeConfiguration $configuration,
+        Parser $parser,
+        PluginOptions $pluginOptions,
+    ): void {
+        $configuration->addMetric(new OwnedDirectoriesCount($parser, $pluginOptions));
+        $configuration->addMetric(new OwnedDirectoriesListing($parser, $pluginOptions));
 
-        return [
-            new OwnedDirectoriesCount($this->parser, $this->pluginOptions),
-            new UnownedDirectories($this->parser, $this->pluginOptions),
-            new OwnedFilesCount($this->parser, $this->pluginOptions),
-            new OwnedDirectoriesCount($this->parser, $this->pluginOptions),
-            new OwnedFilesListing($this->parser, $this->pluginOptions),
-        ];
+        $configuration->addMetric(new OwnedFilesCount($parser, $pluginOptions));
+        $configuration->addMetric(new OwnedFilesListing($parser, $pluginOptions));
+
+        $configuration->addMetric(new UnownedDirectories($parser, $pluginOptions));
     }
 }
