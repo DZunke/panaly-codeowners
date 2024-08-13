@@ -16,6 +16,7 @@ readonly class PluginOptions
     /**
      * @param non-empty-string          $codeOwnerFile
      * @param list<ReplaceMetricOption> $replaceMetricOptions
+     * @param string[]                  $excludeDirectories
      */
     public function __construct(
         public string $codeOwnerFile,
@@ -43,6 +44,7 @@ readonly class PluginOptions
         return $found instanceof ReplaceMetricOption ? $found : null;
     }
 
+    /** @param array<string, mixed> $options */
     public static function fromArray(array $options): PluginOptions
     {
         return new self(

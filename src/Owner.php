@@ -10,6 +10,11 @@ use function array_map;
 
 class Owner
 {
+    /**
+     * @param list<string> $pattern
+     * @param list<string> $paths
+     * @param list<string> $files
+     */
     public function __construct(
         private readonly string $owner,
         private array $pattern = [],

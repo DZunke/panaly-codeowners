@@ -16,8 +16,8 @@ use Panaly\Plugin\BasePlugin;
 
 class CodeOwnersPlugin extends BasePlugin
 {
-    private PluginOptions|null $pluginOptions;
-    private Parser|null $parser;
+    private PluginOptions|null $pluginOptions = null;
+    private Parser|null $parser               = null;
 
     public function initialize(
         ConfigurationFile $configurationFile,
@@ -47,6 +47,7 @@ class CodeOwnersPlugin extends BasePlugin
         }
 
         return [
+            new OwnedDirectoriesCount($this->parser, $this->pluginOptions),
             new UnownedDirectories($this->parser, $this->pluginOptions),
             new OwnedFilesCount($this->parser, $this->pluginOptions),
             new OwnedDirectoriesCount($this->parser, $this->pluginOptions),

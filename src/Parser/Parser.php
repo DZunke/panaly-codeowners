@@ -6,6 +6,7 @@ namespace DZunke\PanalyCodeOwners\Parser;
 
 use CodeOwners\Exception\NoMatchFoundException;
 use CodeOwners\Parser as CodeOwnerStandardParser;
+use CodeOwners\Pattern;
 use CodeOwners\PatternMatcher;
 use DZunke\PanalyCodeOwners\Owner;
 use Psr\Log\LoggerInterface;
@@ -99,7 +100,11 @@ class Parser
         return self::$ownerCache[$codeownerContentHash] = $owners;
     }
 
-    /** @return array<non-empty-string, Owner> */
+    /**
+     * @param Pattern[] $patterns
+     *
+     * @return array<non-empty-string, Owner>
+     */
     private function patternsToOwners(array $patterns): array
     {
         $patternsGroupedByOwners = [];

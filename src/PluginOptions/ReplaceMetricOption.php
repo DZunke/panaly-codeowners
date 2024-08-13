@@ -15,6 +15,7 @@ readonly class ReplaceMetricOption
     public const WRITE_PATHS = 'paths';
     public const WRITE_BOTH  = 'both';
 
+    /** @param string[] $owners */
     public function __construct(
         public string $metricPath,
         public string $type,
